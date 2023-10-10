@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>GrassRootCRM</title>
+</head>
+<body>
+    <div class="wrapper">
+        <form action="new/company/create" class="company_creation" method="POST">
+            <label for="company_name">Company Name:</label>
+            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="Company Name">
+            <label for="physical_address">Physical Address:</label>
+            <input type="text" name="physical_address" id="physical_address" class="form-control" placeholder="Company Address">
+            <label for="phone_number">Phone Number:</label>
+            <input type="number" name="phone_number" id="phone_number" class="form-control" placeholder="xxx-xxx-xxxx">
+            <div class="mt-3">
+                <button class="btn btn-lg btn-primary btn-block">Add Company</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 from flask_app import app
 from flask import render_template, redirect, request, session, flash, url_for
 from flask_app.models.user import User
+from flask_app.models.company import Company
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 
@@ -8,7 +9,9 @@ bcrypt = Bcrypt(app)
 @app.route('/')
 def home():
     return render_template('landing.html')
-
+@app.route('/dashboard') #Only accessed once a user is logged in.
+def dash():
+    return render_template('index.html')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -21,7 +24,7 @@ def login():
         else:
             session['user_id'] = user_in_db.id
             session['first_name'] = user_in_db.first_name
-            return redirect('/')
+            return redirect('/dashboard')
     return render_template('login.html')
 
 @app.route('/create_user')
@@ -37,6 +40,7 @@ def registered():
     data = {
         "first_name": request.form["first_name"],
         "last_name": request.form["last_name"],
+        "role": request.form["role"],
         "email": request.form["email"],
         "password": pw_hash,
         "confirm_password": request.form["confirm_password"]
@@ -44,43 +48,51 @@ def registered():
     User.save(data)
     return redirect("/")
 
-@app.route("/new/post/create", methods=['POST'])
-def create_post():
-    if not Post.validate_post(request.form):
-        return redirect('/')
-    if "user_id" not in session:
-        return redirect(url_for('login'))
-    session["text"] = request.form["text"]
+@app.route("/new/company") #This displays a form for adding 
+def creating_company():
+    return render_template("company_creation.html")
+
+@app.route("/new/company/create", methods=['POST'])
+def car_submission():
+    if not Company.validate_company(request.form):
+        return redirect('/new/company')
+    session["company_name"]= request.form["company_name"]
+    session["physical_address"]= request.form["physical_address"]
+    session["phone_number"]= request.form["phone_number"]
+    session["user_id"]= request.form["user_id"]
     data = {
-        "text": request.form["text"],
+        "company_name": request.form["company_name"],
+        "physical_address": request.form["physical_address"],
+        "phone_number": request.form["phone_number"],
         "user_id": session["user_id"]
     }
-    Post.create_post(data)
-    return redirect("/")
-
+    Company.create_company(data)
+    return redirect("/dashboard")
 @app.route('/edit/<int:id>')
 def edit_post(id):
     if "user_id" not in session:
         return redirect('/')
-    single_post=Post.get_one(id)
-    return render_template("edit_post.html", single_post= single_post,id=id)
+    single_company=Company.get_one(id)
+    return render_template("edit_post.html", single_company= single_company,id=id)
 
 @app.route('/edit/<int:id>/finalize', methods=["POST"])
 def finalize_edit(id):
-    if not Post.validate_post(request.form):
+    if not Company.validate_post(request.form):
         return redirect('/edit/<int:id>')
     data = {
-        "text": request.form["text"],
+        "company_name": request.form["company_name"],
+        "physical_address": request.form["physical_address"],
+        "phone_number": request.form["phone_number"],
         "id": id
     }
-    Post.edit_post(data)
-    return redirect('/')
+    Company.edit_company(data)
+    return redirect('/index')
 
-@app.route('/post/delete/<int:id>')
+@app.route('/company/delete/<int:id>')
 def delete(id):
     if "user_id" not in session:
         return redirect(url_for('login'))
-    Post.delete(id)
+    Company.delete(id)
     return redirect('/')
 
 

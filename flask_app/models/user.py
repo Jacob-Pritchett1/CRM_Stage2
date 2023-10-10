@@ -8,6 +8,7 @@ EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 
 class User: 
+    DB = "crm_db"
     def __init__(self, data):
         self.id = data['id']
         self.first_name = data['first_name']
@@ -15,8 +16,8 @@ class User:
         self.role = data['role']
         self.email = data['email']
         self.password = data['password']
-        self.created_at = data['created-at']
-        self.updated_at = data['updated-at']
+        self.created_at = data['created_at']
+        self.updated_at = data['updated_at']
         self.company = None
         self.note = None
     @classmethod #save method will create a user in the database
@@ -43,7 +44,6 @@ class User:
             flash("Invalid email address. Please try again.")
             is_valid=False
         return is_valid
-
     @classmethod
     def get_all_users(cls):
         query = "SELECT * FROM user;"
@@ -52,3 +52,12 @@ class User:
         for user in results:
             users.append(cls(user))
         return users
+    @classmethod
+    def get_email(cls, data):
+        query = "SELECT * FROM user WHERE email = %(email)s;"
+        result= connectToMySQL("crm_db").query_db(query,data)
+        print(result)
+        if len(result) < 1:
+            return False
+        return cls(result[0])
+

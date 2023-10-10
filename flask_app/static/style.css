@@ -10,3 +10,17 @@
     width: 50px;
     height: 50px;
 }
+.sidebar {
+    width: 200px;
+    height: 900px;
+    border: 2px solid black;
+    border-radius: 5px;
+    background-color: rgba(255, 166, 0, 0.299);
+}
+.sidebar_button {
+    border: 2px solid black;
+}
+.sidebar_button a {
+    text-decoration: none;
+    align-items: center;
+}
