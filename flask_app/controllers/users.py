@@ -48,23 +48,29 @@ def registered():
     User.save(data)
     return redirect("/")
 
+@app.route("/customers")
+def all_customers():
+    return render_template('my-customers.html')
+
 @app.route("/new/company") #This displays a form for adding 
 def creating_company():
     return render_template("company_creation.html")
 
 @app.route("/new/company/create", methods=['POST'])
-def car_submission():
+def company_submission():
+    if "user_id" not in session:
+        return redirect('/login')
     if not Company.validate_company(request.form):
         return redirect('/new/company')
+    user_id=session["user_id"]
     session["company_name"]= request.form["company_name"]
     session["physical_address"]= request.form["physical_address"]
     session["phone_number"]= request.form["phone_number"]
-    session["user_id"]= request.form["user_id"]
     data = {
         "company_name": request.form["company_name"],
         "physical_address": request.form["physical_address"],
         "phone_number": request.form["phone_number"],
-        "user_id": session["user_id"]
+        "user_id": user_id
     }
     Company.create_company(data)
     return redirect("/dashboard")
@@ -136,4 +142,3 @@ def logging_out():
 
 if __name__=="__main__":   # Ensure this file is being run directly and not from a different module    
     app.run(debug=True)    # Run the app in debug mode.
-
