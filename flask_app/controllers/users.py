@@ -107,6 +107,21 @@ def logging_out():
     session.clear()
     return redirect('/')
 
+@app.route('/csv')
+def upload_csv():
+    if 'file' not in request.files:
+        return "No file part"
+    file = request.files['file']
+    if file.filename == '':
+        return "No selected file"
+    if file:
+        filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(filename)
+        df = pd.read_csv(filename)
+        html_table = df.to_html(classes='table table-striped', escape=False, index=False)
+        return render_template('index.html', html_table=html_table)
+
+
 # from flask_app import app
 # from flask import Flask, render_template, redirect, request
 # from flask_app.models.user import User
