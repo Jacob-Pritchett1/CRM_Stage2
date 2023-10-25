@@ -121,7 +121,12 @@ def upload_csv():
         html_table = df.to_html(classes='table table-striped', escape=False, index=False)
         return render_template('index.html', html_table=html_table)
 
-
+#------------------------------------------------------------------------------------
+@app.route('/new_note')
+def note_template():
+    return render_template('notes.html')
+    
+#------------------------------------------------------------------------------------
 # from flask_app import app
 # from flask import Flask, render_template, redirect, request
 # from flask_app.models.user import User
